@@ -114,95 +114,37 @@
 
     <!-- ANA İÇERİK ALANI -->
     <main class="flex-1 flex flex-col min-w-0 relative hidden-safe bg-slate-50" id="main-content">
-        
-        <!-- GÖRÜNÜM: ARŞİV (REPO) -->
-        <div id="view-repo" class="flex-1 flex flex-col hidden-safe h-full">
-            <header class="bg-white border-b border-slate-200 p-6 shrink-0 z-10 flex flex-col gap-4">
-                <div class="flex justify-between items-end">
-                    <div>
-                        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Soru Arşivi</h2>
-                        <p class="text-sm text-slate-500 font-medium">Sisteme yüklediğiniz tüm PDF ve görseller.</p>
-                    </div>
-                    <div class="text-right flex flex-col items-end gap-2">
-                        <button onclick="window.repoLogic.deleteSelected()" id="repo-delete-selected-btn" disabled class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i> Seçilenleri Sil
-                        </button>
+        <header id="top-header" class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0 select-none shadow-sm z-10 no-print">
+            <h2 id="top-bar-title" class="text-lg font-bold text-slate-800 flex items-center gap-2">Soru Arşivi</h2>
+            <div id="top-bar-actions" class="flex items-center gap-4 text-slate-400"></div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 custom-scrollbar relative" id="workspace">
+            
+            <!-- GÖRÜNÜM: ARŞİV (REPO) -->
+            <div id="view-repo" class="flex-1 flex flex-col hidden-safe h-full">
+                <div class="bg-white border-b border-slate-200 p-6 shrink-0 z-10 flex flex-col gap-4 rounded-xl shadow-sm mb-6">
+                    <div class="flex justify-between items-end">
                         <div>
-                            <span class="text-sm font-bold text-slate-500">Depodaki Soru:</span>
-                            <span id="repo-total-count" class="text-2xl font-black text-blue-600 block leading-none mt-1">0</span>
+                            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Soru Arşivi</h2>
+                            <p class="text-sm text-slate-500 font-medium">Sisteme yüklediğiniz tüm PDF ve görseller.</p>
+                        </div>
+                        <div class="text-right flex flex-col items-end gap-2">
+                            <button onclick="window.repoLogic.deleteSelected()" id="repo-delete-selected-btn" disabled class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i> Seçilenleri Sil
+                            </button>
+                            <div>
+                                <span class="text-sm font-bold text-slate-500">Depodaki Soru:</span>
+                                <span id="repo-total-count" class="text-2xl font-black text-blue-600 block leading-none mt-1">0</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="flex flex-wrap gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="filter" class="w-4 h-4 text-slate-400"></i>
-                        <select id="filter-subject" onchange="window.repoLogic.onFilterChange()" class="bg-white border border-slate-300 text-sm font-bold text-slate-700 rounded-lg px-4 py-2 outline-none focus:border-blue-500 shadow-sm cursor-pointer min-w-[150px]">
-                            <option value="all">Tüm Dersler</option>
-                            <option value="Türkçe">Türkçe</option>
-                            <option value="Matematik">Matematik</option>
-                            <option value="Fen Bilimleri">Fen Bilimleri</option>
-                            <option value="T.C. İnkılap Tarihi">T.C. İnkılap Tarihi</option>
-                            <option value="Din Kültürü">Din Kültürü</option>
-                            <option value="Yabancı Dil">Yabancı Dil</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <select id="filter-topic" onchange="window.repoLogic.applyFilters()" disabled class="bg-slate-100 border border-slate-200 text-sm font-bold text-slate-500 rounded-lg px-4 py-2 outline-none focus:border-blue-500 shadow-sm cursor-pointer min-w-[200px] disabled:opacity-50">
-                            <option value="all">Önce Ders Seçin</option>
-                        </select>
-                    </div>
-                    <div class="flex-1 flex justify-end">
-                        <button onclick="window.repoLogic.clearSelection()" class="bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Seçimi Temizle
-                        </button>
-                    </div>
-                </div>
-            </header>
-            
-            <div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                <div id="repo-empty" class="hidden-safe h-full flex flex-col items-center justify-center text-center">
-                    <div class="bg-slate-100 p-6 rounded-full mb-4">
-                        <i data-lucide="inbox" class="w-16 h-16 text-slate-300"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-2">Bu Kategori Boş</h3>
-                    <p class="text-slate-500 max-w-md">Seçtiğiniz ders veya konuya ait yüklenmiş bir soru bulunamadı. Lütfen "Soru Yükle" sekmesinden yeni PDF'ler ekleyin.</p>
-                </div>
-                
-                <div id="repo-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    <!-- Javascript ile doldurulacak -->
-                </div>
-            </div>
-        </div>
-
-        <!-- GÖRÜNÜM: YÜKLEME (UPLOAD) -->
-        <div id="view-upload" class="flex-1 overflow-y-auto p-8 custom-scrollbar hidden-safe">
-            <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
-                <div class="mb-8 border-b border-slate-100 pb-6 flex justify-between items-end">
-                    <div>
-                        <h2 class="text-3xl font-black text-slate-800 tracking-tight mb-2">PDF / Soru Yükleme Merkezi</h2>
-                        <p class="text-slate-500">Tekil soru görsellerini veya yaprak test PDF'lerinizi <b>(50 MB'a kadar)</b> buraya yükleyebilirsiniz.</p>
-                    </div>
-                    <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold border border-blue-100 flex items-center gap-2">
-                        <i data-lucide="hard-drive" class="w-4 h-4"></i> Doğrudan Bulut Transferi Aktif
-                    </div>
-                </div>
-
-                <div id="upload-dropzone" class="w-full border-2 border-dashed border-blue-300 bg-blue-50/30 rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-500 mb-8" onclick="document.getElementById('upload-input').click()">
-                    <input type="file" id="upload-input" accept=".pdf, image/*" multiple class="hidden" onchange="window.uploadLogic.handleFiles(event.target.files)">
-                    <div class="bg-white p-5 rounded-full shadow-sm mb-4 text-blue-500 border border-blue-100">
-                        <i data-lucide="folder-up" class="w-10 h-10"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-2">PDF veya Görselleri Sürükleyin</h3>
-                    <p class="text-slate-500 text-sm">veya bilgisayardan seçmek için tıklayın</p>
-                </div>
-
-                <div id="upload-list-container" class="hidden-safe">
-                    <div class="flex items-center justify-between mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <span class="text-sm font-bold text-slate-800 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> Yüklenecek Dosyalar (<span id="upload-count">0</span>)</span>
-                        <div class="flex items-center gap-3">
-                            <select id="bulk-upload-subject" onchange="window.uploadLogic.applySubjectToAll(this.value)" class="text-xs font-bold border border-slate-300 text-slate-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none px-3 py-2 bg-white cursor-pointer">
-                                <option value="">Tümüne Ders Ata...</option>
+                    
+                    <div class="flex flex-wrap gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 mt-2">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="filter" class="w-4 h-4 text-slate-400"></i>
+                            <select id="filter-subject" onchange="window.repoLogic.onFilterChange()" class="bg-white border border-slate-300 text-sm font-bold text-slate-700 rounded-lg px-4 py-2 outline-none focus:border-blue-500 shadow-sm cursor-pointer min-w-[150px]">
+                                <option value="all">Tüm Dersler</option>
                                 <option value="Türkçe">Türkçe</option>
                                 <option value="Matematik">Matematik</option>
                                 <option value="Fen Bilimleri">Fen Bilimleri</option>
@@ -210,169 +152,178 @@
                                 <option value="Din Kültürü">Din Kültürü</option>
                                 <option value="Yabancı Dil">Yabancı Dil</option>
                             </select>
-                            <button onclick="window.uploadLogic.clear()" class="text-xs font-bold text-rose-500 hover:text-rose-700 bg-rose-50 px-3 py-2 rounded-lg border border-rose-100">Listeyi Temizle</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="filter-topic" onchange="window.repoLogic.applyFilters()" disabled class="bg-slate-100 border border-slate-200 text-sm font-bold text-slate-500 rounded-lg px-4 py-2 outline-none focus:border-blue-500 shadow-sm cursor-pointer min-w-[200px] disabled:opacity-50">
+                                <option value="all">Önce Ders Seçin</option>
+                            </select>
+                        </div>
+                        <div class="flex-1 flex justify-end">
+                            <button onclick="window.repoLogic.clearSelection()" class="bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Seçimi Temizle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="repo-empty" class="hidden-safe h-full flex flex-col items-center justify-center text-center mt-20">
+                    <div class="bg-slate-200 p-6 rounded-full mb-4">
+                        <i data-lucide="inbox" class="w-16 h-16 text-slate-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Bu Kategori Boş</h3>
+                    <p class="text-slate-500 max-w-md">Seçtiğiniz kategoriye ait henüz bir soru yüklenmemiş.</p>
+                </div>
+                
+                <div id="repo-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    <!-- JS Grid -->
+                </div>
+            </div>
+
+            <!-- GÖRÜNÜM: YÜKLEME (UPLOAD) -->
+            <div id="view-upload" class="flex-1 overflow-y-auto hidden-safe">
+                <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
+                    <div class="mb-8 border-b border-slate-100 pb-6 flex justify-between items-end">
+                        <div>
+                            <h2 class="text-3xl font-black text-slate-800 tracking-tight mb-2">PDF / Soru Yükleme Merkezi</h2>
+                            <p class="text-slate-500">Tekil soru görsellerini veya PDF'lerinizi <b>(50 MB'a kadar)</b> buraya yükleyebilirsiniz.</p>
+                        </div>
+                        <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold border border-blue-100 flex items-center gap-2">
+                            <i data-lucide="hard-drive" class="w-4 h-4"></i> Doğrudan Bulut Transferi Aktif
                         </div>
                     </div>
 
-                    <div class="max-h-[60vh] overflow-y-auto custom-scrollbar rounded-xl border border-slate-200 bg-white mb-6">
-                        <ul id="upload-list" class="divide-y divide-slate-100"></ul>
+                    <div id="upload-dropzone" class="w-full border-2 border-dashed border-blue-300 bg-blue-50/30 rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-500 mb-8" onclick="document.getElementById('upload-input').click()">
+                        <input type="file" id="upload-input" accept=".pdf, image/*" multiple class="hidden" onchange="window.uploadLogic.handleFiles(event.target.files)">
+                        <div class="bg-white p-5 rounded-full shadow-sm mb-4 text-blue-500 border border-blue-100">
+                            <i data-lucide="folder-up" class="w-10 h-10"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Dosyaları Seç veya Sürükle</h3>
+                        <p class="text-slate-500 text-sm">PDF veya resim dosyaları (Maks 50MB)</p>
                     </div>
 
-                    <div class="flex justify-end pt-4 border-t border-slate-100">
-                        <button id="upload-save-btn" onclick="window.uploadLogic.saveToCloud()" class="px-8 py-3.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-black transition-all flex items-center gap-2 shadow-lg shadow-blue-200 transform hover:-translate-y-0.5">
-                            <i data-lucide="cloud-upload" class="w-5 h-5"></i> Soruları Arşive Gönder
-                        </button>
+                    <div id="upload-list-container" class="hidden-safe">
+                        <div class="flex items-center justify-between mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-sm font-bold text-slate-800 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> Yüklenecek Dosyalar (<span id="upload-count">0</span>)</span>
+                            <div class="flex items-center gap-3">
+                                <select id="bulk-upload-subject" onchange="window.uploadLogic.applySubjectToAll(this.value)" class="text-xs font-bold border border-slate-300 text-slate-600 rounded-lg outline-none px-3 py-2 bg-white cursor-pointer">
+                                    <option value="">Tümüne Ders Ata...</option>
+                                    <option value="Türkçe">Türkçe</option>
+                                    <option value="Matematik">Matematik</option>
+                                    <option value="Fen Bilimleri">Fen Bilimleri</option>
+                                    <option value="T.C. İnkılap Tarihi">T.C. İnkılap Tarihi</option>
+                                    <option value="Din Kültürü">Din Kültürü</option>
+                                    <option value="Yabancı Dil">Yabancı Dil</option>
+                                </select>
+                                <button onclick="window.uploadLogic.clear()" class="text-xs font-bold text-rose-500 hover:text-rose-700 bg-rose-50 px-3 py-2 rounded-lg border border-rose-100">Temizle</button>
+                            </div>
+                        </div>
+
+                        <div class="max-h-[60vh] overflow-y-auto custom-scrollbar rounded-xl border border-slate-200 bg-white mb-6">
+                            <ul id="upload-list" class="divide-y divide-slate-100"></ul>
+                        </div>
+
+                        <div class="flex justify-end pt-4">
+                            <button id="upload-save-btn" onclick="window.uploadLogic.saveToCloud()" class="px-8 py-3.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-black transition-all flex items-center gap-2 shadow-lg">
+                                <i data-lucide="cloud-upload" class="w-5 h-5"></i> Buluta Gönder
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- GÖRÜNÜM: TEST OLUŞTURUCU (CART) -->
-        <div id="view-test" class="flex-1 flex flex-col hidden-safe h-full bg-slate-100">
-            <header class="bg-white border-b border-slate-200 p-6 shrink-0 z-10 flex justify-between items-center shadow-sm">
-                <div>
-                    <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                        <i data-lucide="file-check-2" class="text-blue-600"></i> Test Oluşturucu
-                    </h2>
-                    <p class="text-sm text-slate-500 font-medium mt-1">Seçtiğiniz <span id="test-total-selected" class="font-bold text-slate-800">0</span> soruyu PDF veya yazıcı çıktısı haline getirin.</p>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="window.testLogic.clearCart()" class="px-4 py-2 bg-white border border-slate-300 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-bold transition-colors">
-                        Sepeti Boşalt
-                    </button>
-                    <button onclick="window.appNav.goTo('print')" id="btn-go-print" disabled class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black transition-colors flex items-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i data-lucide="printer"></i> Çıktı Al (PDF)
-                    </button>
-                </div>
-            </header>
-            
-            <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                <div id="test-empty" class="flex flex-col items-center justify-center h-full text-center">
+            <!-- GÖRÜNÜM: TEST OLUŞTURUCU (CART) -->
+            <div id="view-test" class="flex-1 flex flex-col hidden-safe h-full">
+                <div id="test-empty" class="flex flex-col items-center justify-center h-full text-center py-20">
                     <div class="bg-white p-8 rounded-full shadow-sm border border-slate-100 mb-6">
                         <i data-lucide="shopping-cart" class="w-16 h-16 text-slate-300"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-2">Test Sepetiniz Boş</h3>
-                    <p class="text-slate-500 max-w-md">"Soru Arşivi" sekmesine giderek beğendiğiniz soruların altındaki "Teste Ekle" butonuna basarak sepetinizi doldurun.</p>
-                    <button onclick="window.appNav.goTo('repo')" class="mt-6 px-6 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition-colors shadow-lg">
-                        Arşive Git
+                    <p class="text-slate-500 max-w-md">Arşivden soru seçerek buraya ekleyebilirsiniz.</p>
+                </div>
+
+                <div id="test-cart-list" class="max-w-4xl mx-auto space-y-4 hidden-safe pb-20">
+                    <!-- Sepet Listesi -->
+                </div>
+            </div>
+
+            <!-- GÖRÜNÜM: AYARLAR -->
+            <div id="view-settings" class="max-w-3xl mx-auto space-y-6 hidden-safe">
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 border-b border-slate-100 p-6 flex items-start gap-4">
+                        <div class="bg-blue-600 p-3 rounded-xl text-white"><i data-lucide="database" class="w-6 h-6"></i></div>
+                        <div>
+                            <h3 class="text-lg font-black text-slate-800">Firebase Bağlantısı</h3>
+                            <p class="text-xs font-semibold text-slate-500 mt-1">Soru Deposu'nun çalışması için Firebase Config kodunuzu buraya girin.</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <textarea id="setting-firebase-config" rows="8" placeholder="const firebaseConfig = { ... };" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none font-mono text-xs leading-relaxed bg-slate-50"></textarea>
+                        <div class="flex justify-between items-center mt-6">
+                            <button onclick="window.settingsLogic.clearFirebase()" class="text-rose-600 hover:bg-rose-50 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors">Bağlantıyı Sil</button>
+                            <button onclick="window.settingsLogic.saveFirebase()" class="bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 rounded-xl text-sm font-black flex items-center gap-2 shadow-md transition-all">Kaydet ve Yeniden Başlat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GÖRÜNÜM: YAZDIRMA (PRINT) -->
+            <div id="view-print" class="hidden-safe max-w-[21cm] mx-auto bg-white print:m-0 print:max-w-none print:shadow-none min-h-screen">
+                <div class="no-print flex items-center justify-between bg-slate-900 text-white p-4 mb-8 shadow-2xl sticky top-4 z-50 rounded-2xl mx-4">
+                    <button onclick="window.appNav.goTo('test')" class="flex items-center gap-2 text-slate-300 hover:text-white transition-colors font-semibold bg-slate-800 px-4 py-2 rounded-lg">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Geri
+                    </button>
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg text-white font-black flex items-center gap-2 transition-colors">
+                        <i data-lucide="printer" class="w-4 h-4"></i> PDF Kaydet / Yazdır
                     </button>
                 </div>
-
-                <div id="test-cart-list" class="max-w-4xl mx-auto space-y-4 hidden-safe">
-                    <!-- JS ile doldurulacak -->
+                <div class="bg-white print:p-0 p-10 shadow-lg print:shadow-none border border-slate-200 print:border-none min-h-[29.7cm]">
+                    <div class="border-b-[3px] border-slate-900 pb-4 mb-8 flex justify-between items-end print-avoid-break">
+                        <div>
+                            <h1 class="text-3xl font-black text-slate-900 uppercase tracking-tighter">Özel Test <span id="print-date" class="text-slate-400 text-xl font-medium ml-2">...</span></h1>
+                            <p class="text-sm text-slate-600 mt-1 font-semibold tracking-wide">Rana LGS Soru Deposu</p>
+                        </div>
+                        <div class="text-sm font-bold text-slate-800 space-y-3 w-72">
+                            <div class="flex justify-between border-b border-slate-400 border-dashed pb-1"><span>Adı Soyadı:</span> <span class="w-40"></span></div>
+                        </div>
+                    </div>
+                    <div id="print-questions-container" class="grid grid-cols-2 gap-x-12 gap-y-16">
+                        <!-- Yazdırılacak Sorular -->
+                    </div>
                 </div>
             </div>
+
         </div>
-
-        <!-- GÖRÜNÜM: YAZDIRMA (PRINT) -->
-        <div id="view-print" class="hidden-safe max-w-[21cm] mx-auto bg-white print:m-0 print:max-w-none print:shadow-none min-h-screen">
-            <div class="no-print flex items-center justify-between bg-slate-900 text-white p-4 mb-8 shadow-2xl sticky top-4 z-50 rounded-2xl mx-4">
-                <button onclick="window.appNav.goTo('test')" class="flex items-center gap-2 text-slate-300 hover:text-white transition-colors font-semibold bg-slate-800 px-4 py-2 rounded-lg">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Düzenlemeye Dön
-                </button>
-                <div class="font-black tracking-wider text-sm flex items-center gap-2 text-blue-400">
-                    <i data-lucide="file-check-2" class="w-5 h-5"></i> BASKI ÖNİZLEME
-                </div>
-                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg text-white font-black flex items-center gap-2 shadow-lg transition-colors">
-                    <i data-lucide="printer" class="w-4 h-4"></i> PDF Kaydet / Yazdır
-                </button>
-            </div>
-            
-            <!-- Yazıcı Sayfası A4 İçeriği -->
-            <div class="bg-white print:p-0 p-10 shadow-lg print:shadow-none border border-slate-200 print:border-none min-h-[29.7cm]">
-                <div class="border-b-[3px] border-slate-900 pb-4 mb-8 flex justify-between items-end print-avoid-break">
-                    <div>
-                        <h1 class="text-3xl font-black text-slate-900 uppercase tracking-tighter">Özel Test <span class="text-slate-400 text-xl font-medium tracking-normal ml-2" id="print-date">...</span></h1>
-                        <p class="text-sm text-slate-600 mt-1 font-semibold flex items-center gap-1"><i data-lucide="library" class="w-4 h-4"></i> Rana LGS Soru Deposu</p>
-                    </div>
-                    <div class="text-sm font-bold text-slate-800 space-y-3 w-72">
-                        <div class="flex justify-between border-b border-slate-400 border-dashed pb-1"><span>Adı Soyadı:</span> <span class="w-40"></span></div>
-                        <div class="flex justify-between border-b border-slate-400 border-dashed pb-1"><span>Doğru / Yanlış:</span> <span class="w-40 text-right">..... / .....</span></div>
-                    </div>
-                </div>
-                
-                <div id="print-questions-container" class="grid grid-cols-2 gap-x-12 gap-y-16">
-                    <!-- JS ile Doldurulacak -->
-                </div>
-            </div>
-        </div>
-
-        <!-- GÖRÜNÜM: AYARLAR -->
-        <div id="view-settings" class="max-w-3xl mx-auto space-y-6 p-8 hidden-safe">
-            <div class="mb-8">
-                <h2 class="text-3xl font-black text-slate-800 tracking-tight">Sistem ve Bulut Ayarları</h2>
-                <p class="text-sm text-slate-500 font-medium mt-2">Uygulamanın GitHub veya yerel bilgisayarda çalışırken 50MB dosya kapasitesini desteklemesi için Firebase veritabanı kurulumunu yapınız.</p>
-            </div>
-
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 border-b border-slate-100 p-6 flex items-start gap-4">
-                    <div class="bg-blue-600 p-3 rounded-xl text-white shadow-md shadow-blue-200"><i data-lucide="database" class="w-6 h-6"></i></div>
-                    <div>
-                        <h3 class="text-lg font-black text-slate-800">Firebase Konfigürasyon Kodu</h3>
-                        <p class="text-xs font-semibold text-slate-500 mt-1">Firestore ve Storage altyapısına bağlanmak için süslü parantezli <code>const firebaseConfig = { ... }</code> kodunu yapıştırın.</p>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <textarea id="setting-firebase-config" rows="8" placeholder="const firebaseConfig = {&#10;  apiKey: '...',&#10;  authDomain: '...',&#10;  projectId: '...',&#10;  storageBucket: '...'&#10;};" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none font-mono text-xs leading-relaxed bg-slate-50 shadow-inner"></textarea>
-                    
-                    <div class="flex justify-between items-center mt-6">
-                        <button onclick="window.settingsLogic.clearFirebase()" class="text-rose-600 hover:bg-rose-50 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors border border-transparent hover:border-rose-100">Bağlantıyı Sil</button>
-                        <button onclick="window.settingsLogic.saveFirebase()" class="bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 rounded-xl text-sm font-black flex items-center gap-2 transition-all shadow-md transform hover:-translate-y-0.5"><i data-lucide="save" class="w-4 h-4"></i> Kaydet ve Yeniden Başlat</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- YAPAY ZEKA BAĞLANTISI (SORU DEPOSU İÇİN) -->
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-8">
-                <div class="bg-indigo-50 border-b border-indigo-100 p-6 flex items-start gap-4">
-                    <div class="bg-indigo-600 p-3 rounded-xl text-white shadow-md shadow-indigo-200"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
-                    <div>
-                        <h3 class="text-lg font-black text-indigo-900">Yapay Zeka Bağlantısı (Gemini API)</h3>
-                        <p class="text-xs font-semibold text-indigo-700 mt-1">Yüklenen soru görsellerinin konusunu otomatik analiz etmek için.</p>
-                    </div>
-                </div>
-                <div class="p-6 flex gap-3">
-                    <input type="password" id="setting-api-key" placeholder="AIzaSy..." class="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm shadow-inner bg-slate-50">
-                    <button onclick="window.settingsLogic.saveGemini()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-sm font-black flex items-center gap-2 transition-colors shadow-md">Kaydet</button>
-                </div>
-            </div>
-
-            <div class="bg-rose-50 rounded-3xl border border-rose-200 overflow-hidden mt-8">
-                <div class="p-6 flex items-start gap-4">
-                    <div class="bg-rose-500 p-3 rounded-xl text-white shadow-md shadow-rose-200"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-black text-rose-900">Depoyu Sıfırla (Tehlikeli İşlem)</h3>
-                        <p class="text-xs font-bold text-rose-700 mt-1 mb-4">Bulutta veya yerel hafızada depolanan TÜM soru PDF'leri ve bilgileri geri döndürülemez şekilde silinir.</p>
-                        <button onclick="window.settingsLogic.deleteAll()" class="bg-white text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white px-6 py-2.5 rounded-xl text-sm font-black flex items-center gap-2 transition-colors shadow-sm">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i> Tüm Depoyu Sil
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- FIREBASE İÇE AKTARIMLARI VE MANTIK -->
+    <!-- FIREBASE & CORE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-        // ==========================================
-        // 1. YAPILANDIRMA VE BAŞLATMA
-        // ==========================================
-        const KALICI_FIREBASE_CONFIG = null; 
-        const KALICI_GEMINI_API_KEY = "";
+        // --- 1. PDF Kontrolü (HATA ALAN BÖLÜM: EN TEPEDE TANIMLANDI) ---
+        window.checkIfPdf = (data) => {
+            if (!data) return false;
+            if (data.isPdf === true || data.isPdf === "true") return true;
+            const fname = data.fileName || (data.fileObj ? data.fileObj.name : '');
+            if (fname && String(fname).toLowerCase().endsWith('.pdf')) return true;
+            const link = data.fileUrl || data.image || data.base64 || (typeof data === 'string' ? data : '');
+            if (typeof link === 'string') {
+                if (link.startsWith('data:application/pdf')) return true;
+                if (link.includes('application%2Fpdf')) return true;
+                if (link.includes('.pdf?alt=media')) return true;
+            }
+            return false;
+        };
 
-        let currentApiKey = KALICI_GEMINI_API_KEY || localStorage.getItem('lgs_depo_gemini_api_key') || "";
+        const generateId = () => Date.now().toString() + "-" + Math.random().toString(36).substr(2, 9);
+        const DEFAULT_SUBJECTS = ['Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi', 'Din Kültürü', 'Yabancı Dil'];
+
+        // --- 2. YAPILANDIRMA ---
         let customFirebaseConfigStr = localStorage.getItem('lgs_depo_firebase_config');
-
         let firebaseConfig = {};
-        if (KALICI_FIREBASE_CONFIG) {
-            firebaseConfig = KALICI_FIREBASE_CONFIG;
-        } else if (customFirebaseConfigStr) {
+        if (customFirebaseConfigStr) {
             try { firebaseConfig = JSON.parse(customFirebaseConfigStr); } catch (e) {}
         } else if (typeof __firebase_config !== 'undefined' && __firebase_config) {
             try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) {}
@@ -388,901 +339,248 @@
                 db = getFirestore(app); 
                 storage = getStorage(app); 
                 window.isLocalMode = false;
-            } catch (err) { 
-                console.error("Firebase başlatma hatası:", err); 
-            }
+            } catch (err) { console.error("Firebase Init Error:", err); }
         }
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'rana-lgs-depo-v1';
-        
         window.currentUser = null;
         window.questionsData = []; 
         window.cartIds = []; 
-        window.localDbMemory = []; 
 
-        // Formu doldur
-        document.addEventListener('DOMContentLoaded', () => {
-            const apiInput = document.getElementById('setting-api-key');
-            if (apiInput) apiInput.value = currentApiKey;
-
-            const configInput = document.getElementById('setting-firebase-config');
-            if (configInput) {
-                if (KALICI_FIREBASE_CONFIG) {
-                    configInput.value = JSON.stringify(KALICI_FIREBASE_CONFIG, null, 2);
-                    configInput.disabled = true;
-                } else if (customFirebaseConfigStr) {
-                    try {
-                        const parsed = JSON.parse(customFirebaseConfigStr);
-                        configInput.value = JSON.stringify(parsed, null, 2);
-                    } catch (e) { 
-                        configInput.value = customFirebaseConfigStr; 
-                    }
-                }
-            }
-        });
-
-        // ==========================================
-        // 2. YARDIMCI ARAÇLAR & MODAL
-        // ==========================================
+        // --- 3. UI UTILS ---
         window.uiLogic = {
             showModal: (title, message, isConfirm = false, onConfirm = null) => {
+                const modal = document.getElementById('custom-modal');
+                if(!modal) return;
                 document.getElementById('modal-title').textContent = title;
                 document.getElementById('modal-message').innerHTML = message; 
-                const modal = document.getElementById('custom-modal');
-                const cancelBtn = document.getElementById('modal-cancel-btn');
-                const confirmBtn = document.getElementById('modal-confirm-btn');
-                
                 modal.classList.remove('hidden-safe');
-                if (isConfirm) { 
-                    cancelBtn.classList.remove('hidden-safe'); 
-                    cancelBtn.onclick = () => modal.classList.add('hidden-safe'); 
-                } 
-                else { 
-                    cancelBtn.classList.add('hidden-safe'); 
-                }
-                
-                confirmBtn.onclick = () => { 
-                    modal.classList.add('hidden-safe'); 
-                    if (onConfirm) onConfirm(); 
-                };
+                const cb = document.getElementById('modal-cancel-btn');
+                if(isConfirm && cb) { cb.classList.remove('hidden-safe'); cb.onclick = () => modal.classList.add('hidden-safe'); }
+                else if(cb) { cb.classList.add('hidden-safe'); }
+                document.getElementById('modal-confirm-btn').onclick = () => { modal.classList.add('hidden-safe'); if (onConfirm) onConfirm(); };
             },
             closePdfModal: () => {
                 document.getElementById('pdf-viewer-iframe').src = "about:blank"; 
                 document.getElementById('pdf-viewer-modal').classList.add('hidden-safe');
             },
-            openPdfModal: async (fileUrl, fileName) => {
-                if (!fileUrl) return window.uiLogic.showModal("Hata", "Dosya yolu bulunamadı.");
-                
-                document.getElementById('pdf-viewer-title').innerHTML = `<i data-lucide="file-text" class="text-rose-400 w-6 h-6"></i> ${fileName || "PDF Önizleme"}`;
-                
-                let urlToOpen = fileUrl;
-                let isBase64 = typeof fileUrl === 'string' && fileUrl.startsWith('data:');
-                
-                if (isBase64) {
-                    try {
-                        const binStr = atob(fileUrl.split(',')[1]);
-                        const len = binStr.length;
-                        const arr = new Uint8Array(len);
-                        for (let i = 0; i < len; i++) { arr[i] = binStr.charCodeAt(i); }
-                        const blob = new Blob([arr], { type: 'application/pdf' });
-                        urlToOpen = URL.createObjectURL(blob);
-                    } catch (e) { console.error(e); }
-                }
-
-                document.getElementById('pdf-viewer-iframe').src = urlToOpen + (urlToOpen.includes('#') ? "" : "#toolbar=0&navpanes=0&scrollbar=0");
-                
-                document.getElementById('pdf-viewer-download').onclick = async () => {
-                    const btn = document.getElementById('pdf-viewer-download');
-                    const originalHTML = btn.innerHTML;
-                    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> İniyor...`;
-                    if(window.lucide) window.lucide.createIcons();
-                    
-                    try {
-                        if (isBase64) {
-                            const a = document.createElement('a'); a.href = urlToOpen; a.download = fileName; a.click();
-                        } else {
-                            try {
-                                const response = await fetch(fileUrl);
-                                if(!response.ok) throw new Error("Network error");
-                                const blob = await response.blob();
-                                const blobUrl = URL.createObjectURL(blob);
-                                const a = document.createElement('a'); a.href = blobUrl; a.download = fileName;
-                                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-                            } catch(e) {
-                                window.open(fileUrl, '_blank');
-                            }
-                        }
-                    } finally {
-                        btn.innerHTML = originalHTML;
-                        if(window.lucide) window.lucide.createIcons();
-                    }
-                };
-                
+            openPdfModal: (url, name) => {
+                if (!url) return window.uiLogic.showModal("Hata", "Dosya yolu yok.");
+                document.getElementById('pdf-viewer-title').innerHTML = `<i data-lucide="file-text" class="text-rose-400 w-6 h-6"></i> ${name || "Soru"}`;
+                document.getElementById('pdf-viewer-iframe').src = url;
+                document.getElementById('pdf-viewer-download').onclick = () => { window.open(url, '_blank'); };
                 document.getElementById('pdf-viewer-modal').classList.remove('hidden-safe');
-                if(window.lucide) window.lucide.createIcons();
+                lucide.createIcons();
             },
             updateCartBadge: () => {
-                const badge = document.getElementById('cart-badge');
-                if(!badge) return;
-                if(window.cartIds.length > 0) {
-                    badge.innerText = window.cartIds.length;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
+                const b = document.getElementById('cart-badge');
+                if(!b) return;
+                if(window.cartIds.length > 0) { b.innerText = window.cartIds.length; b.classList.remove('hidden'); }
+                else { b.classList.add('hidden'); }
             }
         };
 
-        const generateId = () => Date.now().toString() + "-" + Math.random().toString(36).substr(2, 9);
-        
-        const checkIfPdf = (fileOrUrl) => {
-            if(typeof fileOrUrl === 'string') {
-                if(fileOrUrl.startsWith('data:application/pdf')) return true;
-                if(fileOrUrl.toLowerCase().includes('.pdf')) return true;
-                if(fileOrUrl.includes('application%2Fpdf')) return true;
-                return false;
-            } else if (fileOrUrl instanceof File) {
-                return fileOrUrl.type === 'application/pdf' || fileOrUrl.name.toLowerCase().endsWith('.pdf');
-            }
-            return false;
-        };
-
-        const getBase64 = (file) => new Promise((res, rej) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => res(reader.result);
-            reader.onerror = error => rej(error);
-        });
-
-        // AI Konu Çıkarımı
-        const analyzeTopicWithAI = async (base64Data) => {
-            const useApiKey = currentApiKey || "";
-            if (!useApiKey || useApiKey.trim().length < 10) {
-                throw new Error("Geçerli bir API anahtarı bulunamadı. Lütfen Ayarlar'dan API kodunuzu girin.");
-            }
-            
-            const urlText = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${useApiKey}`;
-            let mimeType = base64Data.startsWith("data:application/pdf") ? "application/pdf" : "image/jpeg";
-            const base64WithoutPrefix = base64Data.split(',')[1];
-            
-            const payloadText = {
-                contents: [{ role: "user", parts: [
-                    { text: `Sen bir LGS öğretmenisin. Sana verilen bu soruyu analiz et. Lütfen SADECE şu formatta yanıt ver: "Ders Adı|Konu Adı". Ders isimleri şunlardan biri olmalıdır: Türkçe, Matematik, Fen Bilimleri, T.C. İnkılap Tarihi, Din Kültürü, Yabancı Dil. (Örnek yanıt: Matematik|Üslü İfadeler). Ekstra hiçbir kelime kullanma.` },
-                    { inlineData: { mimeType: mimeType, data: base64WithoutPrefix } }
-                ]}]
-            };
-
-            let retries = 3, delay = 1000;
-            while (retries > 0) {
-                try {
-                    const res = await fetch(urlText, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payloadText) });
-                    const result = await res.json();
-                    if (result.error) throw new Error(result.error.message);
-                    
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
-                    if(text.includes('|')) {
-                        const parts = text.split('|');
-                        return { subject: parts[0].trim(), topic: parts[1].replace(/[\n\r.]/g, '').trim() };
-                    }
-                    return { subject: "", topic: text.replace(/[\n\r.]/g, '') };
-                } catch (error) {
-                    retries--; if (retries === 0) throw error;
-                    await new Promise(r => setTimeout(r, delay)); delay *= 2;
-                }
-            }
-        };
-
-        // ==========================================
-        // 3. YÜKLEME (UPLOAD) MANTIĞI
-        // ==========================================
+        // --- 4. UPLOAD LOGIC ---
         window.uploadLogic = {
-            filesData: [], 
-            
-            handleFiles: async (fileList) => {
-                if (!fileList || fileList.length === 0) return;
-                
-                const btn = document.getElementById('upload-save-btn');
-                if(btn) { btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Dosyalar Hazırlanıyor...`; }
-                if(window.lucide) window.lucide.createIcons();
-
-                const files = Array.from(fileList);
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    if (file.size > 50 * 1024 * 1024) { 
-                        window.uiLogic.showModal("Boyut Uyarısı", `<b>${file.name}</b> adlı dosya 50 MB sınırını aştığı için iptal edildi.`);
-                        continue;
-                    }
-                    
-                    const isPdf = checkIfPdf(file);
-                    if(!isPdf && !file.type.startsWith('image/')) continue;
-
-                    let previewBase64 = "";
-                    if (!isPdf && file.size < 5 * 1024 * 1024) {
-                        try { previewBase64 = await getBase64(file); } catch(e){}
-                    } else if (isPdf && file.size < 5 * 1024 * 1024) {
-                         try { previewBase64 = await getBase64(file); } catch(e){}
-                    }
-
-                    window.uploadLogic.filesData.push({
-                        id: generateId(),
-                        fileObj: file,
-                        previewBase64: previewBase64,
-                        isPdf: isPdf,
-                        subject: "",
-                        topic: ""
-                    });
+            filesData: [],
+            handleFiles: (list) => {
+                const files = Array.from(list);
+                for (const file of files) {
+                    if (file.size > 50 * 1024 * 1024) { window.uiLogic.showModal("Limit", `${file.name} 50MB üzeridir.`); continue; }
+                    window.uploadLogic.filesData.push({ id: generateId(), fileObj: file, isPdf: window.checkIfPdf(file), subject: "", topic: "" });
                 }
-
                 window.uploadLogic.renderList();
                 document.getElementById('upload-list-container').classList.remove('hidden-safe');
-                
-                if(btn) { btn.disabled = false; btn.innerHTML = `<i data-lucide="cloud-upload" class="w-5 h-5"></i> Soruları Arşive Gönder`; }
-                
-                const aiBtn = document.getElementById('upload-ai-btn');
-                if(currentApiKey && aiBtn) {
-                    aiBtn.classList.remove('hidden-safe');
-                }
-                if(window.lucide) window.lucide.createIcons();
             },
-
-            clear: () => {
-                window.uploadLogic.filesData = [];
-                document.getElementById('upload-list-container').classList.add('hidden-safe');
-                document.getElementById('upload-list').innerHTML = '';
-                document.getElementById('upload-count').innerText = '0';
-                document.getElementById('upload-input').value = '';
-            },
-
-            applySubjectToAll: (val) => {
-                if(!val) return;
-                window.uploadLogic.filesData.forEach(f => f.subject = val);
-                window.uploadLogic.renderList();
-                document.getElementById('bulk-upload-subject').value = "";
-            },
-
-            updateField: (id, field, value) => {
-                const item = window.uploadLogic.filesData.find(f => f.id === id);
-                if(item) item[field] = value;
-            },
-
-            removeFile: (id) => {
-                window.uploadLogic.filesData = window.uploadLogic.filesData.filter(f => f.id !== id);
-                window.uploadLogic.renderList();
-                if(window.uploadLogic.filesData.length === 0) window.uploadLogic.clear();
-            },
-
-            runAIForImages: async () => {
-                const aiBtn = document.getElementById('upload-ai-btn');
-                if(aiBtn) {
-                    aiBtn.disabled = true;
-                    aiBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> AI Çalışıyor...`;
-                }
-                if(window.lucide) window.lucide.createIcons();
-
-                for (let i = 0; i < window.uploadLogic.filesData.length; i++) {
-                    const f = window.uploadLogic.filesData[i];
-                    if (!f.previewBase64) continue; 
-
-                    try {
-                        const aiResult = await analyzeTopicWithAI(f.previewBase64);
-                        if(aiResult.subject && ['Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi', 'Din Kültürü', 'Yabancı Dil'].includes(aiResult.subject)) {
-                            f.subject = aiResult.subject;
-                        }
-                        if(aiResult.topic) {
-                            f.topic = aiResult.topic;
-                        }
-                    } catch(e) { console.log("AI analiz hatası", e); }
-                }
-                
-                window.uploadLogic.renderList();
-                if(aiBtn) {
-                    aiBtn.disabled = false;
-                    aiBtn.innerHTML = `<i data-lucide="brain" class="w-4 h-4"></i> Konu Bul (AI)`;
-                }
-                if(window.lucide) window.lucide.createIcons();
-            },
-
+            clear: () => { window.uploadLogic.filesData = []; document.getElementById('upload-list-container').classList.add('hidden-safe'); },
+            applySubjectToAll: (val) => { window.uploadLogic.filesData.forEach(f => f.subject = val); window.uploadLogic.renderList(); },
+            updateField: (id, f, v) => { const item = window.uploadLogic.filesData.find(x => x.id === id); if(item) item[f] = v; },
+            removeFile: (id) => { window.uploadLogic.filesData = window.uploadLogic.filesData.filter(x => x.id !== id); window.uploadLogic.renderList(); if(window.uploadLogic.filesData.length === 0) window.uploadLogic.clear(); },
             renderList: () => {
                 document.getElementById('upload-count').innerText = window.uploadLogic.filesData.length;
-                
-                const html = window.uploadLogic.filesData.map((f, idx) => `
-                    <li class="p-4 hover:bg-slate-50 flex flex-col md:flex-row md:items-center gap-4 group border-b border-slate-100 last:border-0">
-                        <div class="flex items-center gap-4 md:w-2/5 min-w-0">
-                            <span class="text-xs font-bold text-slate-400 w-4 text-center">${idx + 1}</span>
-                            <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center shrink-0 border border-slate-200 overflow-hidden relative">
-                                ${f.isPdf ? `
-                                    <i data-lucide="file-text" class="w-6 h-6 text-rose-500"></i>
-                                    <span class="absolute bottom-0 inset-x-0 bg-rose-500 text-white text-[8px] font-black text-center uppercase tracking-widest py-0.5">PDF</span>
-                                ` : (f.previewBase64 ? `<img src="${f.previewBase64}" class="w-full h-full object-cover mix-blend-multiply" />` : `<i data-lucide="image" class="w-6 h-6 text-blue-400"></i>`)}
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <p class="text-sm font-bold text-slate-800 truncate" title="${(f.fileObj.name || '').replace(/"/g, '&quot;')}">${(f.fileObj.name || '').replace(/"/g, '&quot;')}</p>
-                                <p class="text-[10px] font-mono text-slate-500 mt-0.5">${(f.fileObj.size / 1024 / 1024).toFixed(2)} MB</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex-1 grid grid-cols-2 gap-3 items-center">
-                            <select onchange="window.uploadLogic.updateField('${f.id}', 'subject', this.value)" class="text-xs font-bold border border-slate-200 rounded-lg px-3 py-2.5 w-full outline-none focus:ring-2 focus:ring-blue-500 bg-white text-slate-700 shadow-sm cursor-pointer">
-                                <option value="" disabled ${f.subject === '' ? 'selected' : ''}>Ders Seçiniz...</option>
-                                <option value="Türkçe" ${f.subject === 'Türkçe' ? 'selected' : ''}>Türkçe</option>
-                                <option value="Matematik" ${f.subject === 'Matematik' ? 'selected' : ''}>Matematik</option>
-                                <option value="Fen Bilimleri" ${f.subject === 'Fen Bilimleri' ? 'selected' : ''}>Fen Bilimleri</option>
-                                <option value="T.C. İnkılap Tarihi" ${f.subject === 'T.C. İnkılap Tarihi' ? 'selected' : ''}>İnkılap Tarihi</option>
-                                <option value="Din Kültürü" ${f.subject === 'Din Kültürü' ? 'selected' : ''}>Din Kültürü</option>
-                                <option value="Yabancı Dil" ${f.subject === 'Yabancı Dil' ? 'selected' : ''}>Yabancı Dil</option>
-                            </select>
-                            
-                            <input type="text" value="${(f.topic || '').replace(/"/g, '&quot;')}" onchange="window.uploadLogic.updateField('${f.id}', 'topic', this.value)" placeholder="Konu Adı Yazın" class="text-xs font-bold border border-slate-200 rounded-lg px-3 py-2.5 w-full outline-none focus:ring-2 focus:ring-blue-500 text-blue-800 shadow-sm placeholder:font-normal placeholder:text-slate-400">
-                        </div>
-
-                        <button onclick="window.uploadLogic.removeFile('${f.id}')" class="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-2.5 rounded-xl transition-all shrink-0">
-                            <i data-lucide="trash-2" class="w-5 h-5 pointer-events-none"></i>
-                        </button>
+                document.getElementById('upload-list').innerHTML = window.uploadLogic.filesData.map((f, idx) => `
+                    <li class="p-4 flex items-center gap-4">
+                        <i data-lucide="${f.isPdf ? 'file-text' : 'image'}" class="w-6 h-6 text-blue-500"></i>
+                        <p class="text-sm font-bold truncate flex-1">${f.fileObj.name}</p>
+                        <select onchange="window.uploadLogic.updateField('${f.id}','subject',this.value)" class="text-xs border rounded p-2">
+                            <option value="">Ders Seç...</option>
+                            ${DEFAULT_SUBJECTS.map(s => `<option value="${s}" ${f.subject === s ? 'selected' : ''}>${s}</option>`).join('')}
+                        </select>
+                        <input type="text" placeholder="Konu" onchange="window.uploadLogic.updateField('${f.id}','topic',this.value)" value="${f.topic}" class="text-xs border rounded p-2">
+                        <button onclick="window.uploadLogic.removeFile('${f.id}')" class="text-rose-500"><i data-lucide="trash-2"></i></button>
                     </li>
                 `).join('');
-                
-                document.getElementById('upload-list').innerHTML = html;
-                if(window.lucide) window.lucide.createIcons();
+                lucide.createIcons();
             },
-
             saveToCloud: async () => {
-                if (window.uploadLogic.filesData.length === 0) return;
-                
-                const unassigned = window.uploadLogic.filesData.find(f => !f.subject);
-                if (unassigned) {
-                    return window.uiLogic.showModal("Eksik Bilgi", "Lütfen listedeki tüm sorular için bir <b>Ders</b> seçimi yapınız.");
-                }
-
-                if (!window.currentUser && !window.isLocalMode) return;
-                if (window.isLocalMode) {
-                    return window.uiLogic.showModal("Çevrimdışı Mod Hatası", "PDF'leri yerel hafızaya kaydetmek tarayıcıyı çökerteceğinden <b>Soru Deposu sadece Firebase bulut bağlantısı ile çalışır.</b> Lütfen Ayarlar sekmesinden Firebase Config kodunuzu girerek sistemi buluta bağlayın.");
-                }
-
+                if (window.isLocalMode) return window.uiLogic.showModal("Erişim", "Firebase bağlayın.");
                 const btn = document.getElementById('upload-save-btn');
-                if(btn) {
-                    btn.disabled = true;
-                    btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Buluta Aktarılıyor (0/${window.uploadLogic.filesData.length})...`;
-                }
-                if(window.lucide) window.lucide.createIcons();
-
-                let successCount = 0;
-
+                btn.disabled = true; btn.innerText = "Yükleniyor...";
                 try {
-                    for (let i = 0; i < window.uploadLogic.filesData.length; i++) {
-                        const item = window.uploadLogic.filesData[i];
-                        
-                        if(btn) btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Yükleniyor (${i+1}/${window.uploadLogic.filesData.length})...`;
-                        
-                        const safeName = item.fileObj.name.replace(/[^a-zA-Z0-9.]/g, "_");
-                        const uniqueName = Date.now() + "_" + Math.random().toString(36).substring(2,6) + "_" + safeName;
-                        const storageRef = ref(storage, `artifacts/${appId}/users/${window.currentUser.uid}/questions/${uniqueName}`);
-                        
+                    for (const item of window.uploadLogic.filesData) {
+                        if(!item.subject) continue;
+                        const storageRef = ref(storage, `artifacts/${appId}/users/${window.currentUser.uid}/questions/${Date.now()}_${item.fileObj.name.replace(/\s+/g,'_')}`);
                         await uploadBytes(storageRef, item.fileObj);
-                        const fileUrl = await getDownloadURL(storageRef);
-
-                        const payload = {
-                            fileUrl: fileUrl,
-                            fileName: item.fileObj.name,
-                            isPdf: item.isPdf,
-                            subject: item.subject,
-                            topic: item.topic || "Belirtilmemiş",
-                            createdAt: serverTimestamp()
-                        };
-
-                        await addDoc(collection(db, 'artifacts', appId, 'users', window.currentUser.uid, 'questions'), payload);
-                        successCount++;
+                        const url = await getDownloadURL(storageRef);
+                        await addDoc(collection(db, 'artifacts', appId, 'users', window.currentUser.uid, 'questions'), {
+                            fileUrl: url, fileName: item.fileObj.name, isPdf: item.isPdf, subject: item.subject, topic: item.topic || "Belirtilmemiş", createdAt: serverTimestamp()
+                        });
                     }
-
-                    window.uiLogic.showModal("Harika!", `<b>${successCount}</b> adet soru başarıyla bulut deponuza yüklendi!`);
-                    window.uploadLogic.clear();
-                    window.appNav.goTo('repo');
-
-                } catch (err) {
-                    console.error(err);
-                    let errMsg = err.message;
-                    if (err.message.includes("Network Error") || err.message.includes("CORS") || err.message.includes("Failed to fetch") || err.name === "FirebaseError") {
-                        errMsg = "Firebase Storage CORS (Güvenlik) engeline takıldınız.<br><br><b>Çözüm:</b><br>1. <a href='https://console.cloud.google.com/' target='_blank' class='text-blue-500 underline'>Google Cloud Console</a>'a girin.<br>2. Projenizi seçip sağ üstten 'Cloud Shell'i (>_) açın.<br>3. Şu komutları sırayla çalıştırın:<br><code class='block bg-slate-100 p-2 mt-2 text-[10px] break-all'>echo '[{\"origin\": [\"*\"],\"method\": [\"GET\", \"HEAD\", \"POST\", \"PUT\", \"DELETE\", \"OPTIONS\"],\"maxAgeSeconds\": 3600,\"responseHeader\": [\"*\"]}]' > cors.json</code><br><br><code class='block bg-slate-100 p-2 mt-2 text-[10px] break-all'>gsutil cors set cors.json gs://puantaj-5366f.firebasestorage.app</code>";
-                    }
-                    window.uiLogic.showModal("Kritik Yükleme Hatası", "Dosyalar sunucuya gönderilirken bağlantı koptu veya hata oluştu:<br><br><span class='text-xs text-rose-500 font-mono block mt-2'>" + errMsg + "</span>");
-                } finally {
-                    if(btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = `<i data-lucide="cloud-upload" class="w-5 h-5"></i> Soruları Arşive Gönder`;
-                    }
-                    if(window.lucide) window.lucide.createIcons();
-                }
+                    window.uploadLogic.clear(); window.appNav.goTo('repo');
+                } catch (e) { window.uiLogic.showModal("Hata", e.message); }
+                finally { btn.disabled = false; btn.innerText = "Buluta Gönder"; }
             }
         };
 
-        // ==========================================
-        // 4. ARŞİV (REPO) VE FİLTRE MANTIĞI
-        // ==========================================
+        // --- 5. REPO & CART ---
         window.repoLogic = {
             onFilterChange: () => {
-                const subjectFilterEl = document.getElementById('filter-subject');
-                const topicFilterEl = document.getElementById('filter-topic');
-                if(!subjectFilterEl || !topicFilterEl) return;
-
-                const subjectFilter = subjectFilterEl.value;
-                topicFilterEl.innerHTML = '<option value="all">Tüm Konular</option>';
-                
-                if (subjectFilter !== 'all') {
-                    const topics = new Set();
-                    window.questionsData.forEach(q => {
-                        if (q.subject === subjectFilter && q.topic && q.topic !== "Belirtilmemiş") {
-                            topics.add(q.topic);
-                        }
-                    });
-                    
-                    const sortedTopics = Array.from(topics).sort();
-                    sortedTopics.forEach(t => {
-                        topicFilterEl.innerHTML += `<option value="${t}">${t}</option>`;
-                    });
-                    
-                    topicFilterEl.disabled = false;
-                    topicFilterEl.classList.remove('bg-slate-100', 'text-slate-500');
-                    topicFilterEl.classList.add('bg-white', 'text-slate-700');
-                } else {
-                    topicFilterEl.disabled = true;
-                    topicFilterEl.innerHTML = '<option value="all">Önce Ders Seçin</option>';
-                    topicFilterEl.classList.add('bg-slate-100', 'text-slate-500');
-                    topicFilterEl.classList.remove('bg-white', 'text-slate-700');
-                }
-
+                const sub = document.getElementById('filter-subject').value;
+                const top = document.getElementById('filter-topic');
+                top.innerHTML = '<option value="all">Tüm Konular</option>';
+                if(sub !== 'all') {
+                    const tops = new Set();
+                    window.questionsData.filter(q => q.subject === sub).forEach(q => tops.add(q.topic));
+                    tops.forEach(t => top.innerHTML += `<option value="${t}">${t}</option>`);
+                    top.disabled = false;
+                } else { top.disabled = true; }
                 window.repoLogic.applyFilters();
             },
-
             applyFilters: () => {
-                const subjectFilter = document.getElementById('filter-subject')?.value || 'all';
-                const topicFilter = document.getElementById('filter-topic')?.value || 'all';
-                const topicDisabled = document.getElementById('filter-topic')?.disabled;
-
-                let filtered = window.questionsData;
-                
-                if (subjectFilter !== 'all') {
-                    filtered = filtered.filter(q => q.subject === subjectFilter);
-                    if (topicFilter !== 'all' && !topicDisabled) {
-                        filtered = filtered.filter(q => q.topic === topicFilter);
-                    }
-                }
-
-                window.repoLogic.renderGrid(filtered);
+                const sub = document.getElementById('filter-subject').value;
+                const top = document.getElementById('filter-topic').value;
+                let list = window.questionsData;
+                if(sub !== 'all') list = list.filter(q => q.subject === sub);
+                if(top !== 'all') list = list.filter(q => q.topic === top);
+                window.repoLogic.renderGrid(list);
             },
-
-            deleteQuestion: (id, fileUrl) => {
-                window.uiLogic.showModal("Kalıcı Silme", "Bu soruyu veritabanından ve bulut depolamasından tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz.", true, async () => {
-                    try {
-                        if (!window.isLocalMode && window.currentUser) {
-                            await deleteDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'questions', id));
-                            
-                            if (fileUrl && fileUrl.includes('firebasestorage.googleapis.com')) {
-                                try {
-                                    const fileRef = ref(storage, fileUrl);
-                                    await deleteObject(fileRef);
-                                } catch(e) { console.warn("Storage silme atlandı (Zaten silinmiş olabilir):", e); }
-                            }
-                        }
-
-                        window.cartIds = window.cartIds.filter(cid => cid !== id);
-                        window.uiLogic.updateCartBadge();
-                        
-                    } catch(err) {
-                        window.uiLogic.showModal("Hata", "Soru silinemedi: " + err.message);
-                    }
-                });
-            },
-            
-            deleteSelected: async () => {
-                if (window.cartIds.length === 0) return;
-                
-                window.uiLogic.showModal("Seçilenleri Sil", `Sepetteki <b>${window.cartIds.length}</b> adet soruyu kalıcı olarak silmek istediğinize emin misiniz?`, true, async () => {
-                    try {
-                        if (!window.isLocalMode && window.currentUser) {
-                            const deletePromises = window.cartIds.map(async (id) => {
-                                const q = window.questionsData.find(x => x.id === id);
-                                if (q) {
-                                    await deleteDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'questions', id));
-                                    if (q.fileUrl && q.fileUrl.includes('firebasestorage.googleapis.com')) {
-                                        try {
-                                            const fileRef = ref(storage, q.fileUrl);
-                                            await deleteObject(fileRef);
-                                        } catch (e) { console.warn("Storage silme atlandı:", e); }
-                                    }
-                                }
-                            });
-                            await Promise.all(deletePromises);
-                        }
-                        
-                        window.cartIds = [];
-                        window.uiLogic.updateCartBadge();
-                        window.uiLogic.showModal("Başarılı", "Seçilen sorular başarıyla silindi.");
-                    } catch(err) {
-                        window.uiLogic.showModal("Hata", "Sorular silinemedi: " + err.message);
-                    }
-                });
-            },
-
             toggleCart: (id) => {
-                const index = window.cartIds.indexOf(id);
-                if (index > -1) {
-                    window.cartIds.splice(index, 1);
-                } else {
-                    window.cartIds.push(id);
-                }
-                window.uiLogic.updateCartBadge();
-                window.repoLogic.applyFilters(); 
+                const i = window.cartIds.indexOf(id);
+                if(i > -1) window.cartIds.splice(i, 1); else window.cartIds.push(id);
+                window.uiLogic.updateCartBadge(); window.repoLogic.applyFilters();
             },
-            
-            clearSelection: () => {
-                window.cartIds = [];
-                window.uiLogic.updateCartBadge();
-                window.repoLogic.applyFilters();
+            deleteSelected: async () => {
+                window.uiLogic.showModal("Onay", "Sepettekileri silecek misiniz?", true, async () => {
+                    for(const id of window.cartIds) {
+                        const q = window.questionsData.find(x => x.id === id);
+                        await deleteDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'questions', id));
+                        if(q && q.fileUrl.includes('firebasestorage')) try { await deleteObject(ref(storage, q.fileUrl)); } catch(e){}
+                    }
+                    window.cartIds = []; window.uiLogic.updateCartBadge();
+                });
             },
-
-            renderGrid: (dataList) => {
-                const countEl = document.getElementById('repo-total-count');
-                const emptyState = document.getElementById('repo-empty');
+            clearSelection: () => { window.cartIds = []; window.uiLogic.updateCartBadge(); window.repoLogic.applyFilters(); },
+            renderGrid: (list) => {
                 const grid = document.getElementById('repo-grid');
-                const delSelectedBtn = document.getElementById('repo-delete-selected-btn');
-
-                if(countEl) countEl.innerText = dataList.length;
-                if(delSelectedBtn) delSelectedBtn.disabled = window.cartIds.length === 0;
-
-                if (dataList.length === 0) {
-                    if(emptyState) emptyState.classList.remove('hidden-safe');
-                    if(grid) grid.innerHTML = '';
-                    return;
-                }
-
-                if(emptyState) emptyState.classList.add('hidden-safe');
-                
-                if(grid) {
-                    grid.innerHTML = dataList.map(q => {
-                        const inCart = window.cartIds.includes(q.id);
-                        const borderClass = inCart ? 'ring-4 ring-blue-500 border-transparent shadow-lg shadow-blue-200' : 'border-slate-200 hover:border-slate-300 hover:shadow-md';
-                        const btnClass = inCart ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 border-rose-200' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border-blue-200';
-                        const btnIcon = inCart ? 'minus' : 'plus';
-                        const btnText = inCart ? 'Sepetten Çıkar' : 'Teste Ekle';
-                        
-                        const safeTopic = (q.topic || 'Belirtilmemiş').replace(/"/g, '&quot;');
-                        const safeName = (q.fileName || 'Soru').replace(/"/g, '&quot;');
-                        const isPdf = window.checkIfPdf(q);
-
-                        let dateStr = "-";
-                        if(q.createdAt) {
-                            try { dateStr = q.createdAt.toDate().toLocaleDateString('tr-TR'); } catch(e){}
-                        }
-
-                        return `
-                        <div id="repo-card-${q.id}" class="bg-white rounded-2xl overflow-hidden border ${borderClass} transition-all flex flex-col group relative">
-                            
-                            <button type="button" onclick="window.repoLogic.deleteQuestion('${q.id}', '${q.fileUrl}')" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-rose-600 text-white p-2 rounded-lg z-20 shadow-sm transition-colors opacity-0 group-hover:opacity-100 backdrop-blur-sm" title="Tamamen Sil">
-                                <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
-                            </button>
-                            
-                            <div class="aspect-[4/3] bg-slate-100 flex items-center justify-center relative overflow-hidden group/inner cursor-pointer" onclick="window.uiLogic.openPdfModal('${q.fileUrl}', '${safeName}')">
-                                ${(!q.fileUrl || q.fileUrl.trim() === '') ? `
-                                    <div class="flex flex-col items-center justify-center w-full h-full p-4 text-slate-400">
-                                        <i data-lucide="bar-chart-2" class="w-12 h-12 mb-3 opacity-50"></i>
-                                        <span class="text-[10px] font-black uppercase tracking-widest text-center">Görsel Yok<br>Sadece Analiz</span>
-                                    </div>
-                                ` : isPdf ? `
-                                    <div class="flex flex-col items-center justify-center w-full h-full bg-rose-50/80 p-4 transition-colors hover:bg-rose-100">
-                                        <i data-lucide="file-text" class="w-12 h-12 text-rose-500 mb-3 transition-transform group-hover/inner:scale-110 drop-shadow-sm"></i>
-                                        <span class="text-[11px] font-bold text-rose-800 text-center leading-tight line-clamp-3">${safeName}</span>
-                                        <div class="absolute inset-0 flex items-center justify-center bg-rose-900/60 opacity-0 group-hover/inner:opacity-100 transition-opacity backdrop-blur-sm">
-                                            <div class="bg-white text-rose-600 px-4 py-2 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
-                                                <i data-lucide="maximize" class="w-4 h-4 pointer-events-none"></i> Önizle
-                                            </div>
-                                        </div>
-                                    </div>
-                                ` : `
-                                    <img src="${q.fileUrl}" class="w-full h-full object-cover mix-blend-multiply" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-                                    <div style="display:none;" class="flex-col items-center justify-center w-full h-full bg-slate-200/50 text-slate-400">
-                                        <i data-lucide="image-off" class="w-10 h-10 mb-2 opacity-50"></i>
-                                        <span class="text-[10px] font-bold text-center">Görsel Yüklenemedi</span>
-                                    </div>
-                                    <div class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 group-hover/inner:opacity-100 transition-opacity backdrop-blur-sm">
-                                        <div class="bg-white text-slate-800 px-4 py-2 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
-                                            <i data-lucide="maximize" class="w-4 h-4 pointer-events-none"></i> Tam Ekran
-                                        </div>
-                                    </div>
-                                `}
-                            </div>
-                            
-                            <div class="p-3 border-t border-slate-100 bg-white flex flex-col flex-1">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-wider">${q.subject}</span>
-                                    <span class="text-[9px] font-bold text-slate-400 font-mono">${dateStr}</span>
-                                </div>
-                                <p class="text-xs font-bold text-slate-700 leading-snug line-clamp-2 flex-1" title="${safeTopic}">${safeTopic}</p>
-                                
-                                <button onclick="window.repoLogic.toggleCart('${q.id}')" class="mt-3 w-full py-2 border rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-colors ${btnClass}">
-                                    <i data-lucide="${btnIcon}" class="w-3.5 h-3.5 pointer-events-none"></i> ${btnText}
-                                </button>
-                            </div>
-                        </div>`;
-                    }).join('');
-                }
-                
-                if(window.lucide) window.lucide.createIcons();
+                document.getElementById('repo-total-count').innerText = list.length;
+                document.getElementById('repo-delete-selected-btn').disabled = window.cartIds.length === 0;
+                if(list.length === 0) { grid.innerHTML = ""; document.getElementById('repo-empty').classList.remove('hidden-safe'); return; }
+                document.getElementById('repo-empty').classList.add('hidden-safe');
+                grid.innerHTML = list.map(q => {
+                    const inCart = window.cartIds.includes(q.id);
+                    const isPdf = window.checkIfPdf(q);
+                    return `
+                    <div class="bg-white rounded-xl border ${inCart ? 'ring-2 ring-blue-500' : 'border-slate-200'} p-3 flex flex-col gap-2">
+                        <div class="aspect-square bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer" onclick="window.uiLogic.openPdfModal('${q.fileUrl}','${q.fileName}')">
+                            ${isPdf ? '<i data-lucide="file-text" class="w-10 h-10 text-rose-500"></i>' : `<img src="${q.fileUrl}" class="w-full h-full object-cover">`}
+                        </div>
+                        <div class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded w-max">${q.subject}</div>
+                        <p class="text-xs font-bold truncate">${q.topic}</p>
+                        <button onclick="window.repoLogic.toggleCart('${q.id}')" class="text-[10px] font-bold py-2 rounded border ${inCart ? 'bg-rose-50 text-rose-600' : 'bg-blue-50 text-blue-600'}">${inCart ? 'Sepetten Çıkar' : 'Teste Ekle'}</button>
+                    </div>`;
+                }).join('');
+                lucide.createIcons();
             }
         };
 
-        // ==========================================
-        // 5. TEST OLUŞTURUCU (CART & PRINT)
-        // ==========================================
+        // --- 6. TEST & PRINT ---
         window.testLogic = {
-            clearCart: () => {
-                window.cartIds = [];
-                window.uiLogic.updateCartBadge();
-                window.testLogic.renderCart();
-                window.repoLogic.applyFilters();
-            },
-            
-            remove: (id) => {
-                window.cartIds = window.cartIds.filter(cid => cid !== id);
-                window.uiLogic.updateCartBadge();
-                window.testLogic.renderCart();
-                window.repoLogic.applyFilters();
-            },
-
-            moveUp: (index) => {
-                if (index === 0) return;
-                const temp = window.cartIds[index];
-                window.cartIds[index] = window.cartIds[index - 1];
-                window.cartIds[index - 1] = temp;
-                window.testLogic.renderCart();
-            },
-
-            moveDown: (index) => {
-                if (index === window.cartIds.length - 1) return;
-                const temp = window.cartIds[index];
-                window.cartIds[index] = window.cartIds[index + 1];
-                window.cartIds[index + 1] = temp;
-                window.testLogic.renderCart();
-            },
-
             renderCart: () => {
-                const emptyState = document.getElementById('test-empty');
                 const list = document.getElementById('test-cart-list');
-                const totalEl = document.getElementById('test-total-selected');
-                const printBtn = document.getElementById('btn-go-print');
-
-                if(totalEl) totalEl.innerText = window.cartIds.length;
-
-                if (window.cartIds.length === 0) {
-                    if(emptyState) emptyState.classList.remove('hidden-safe');
-                    if(list) list.classList.add('hidden-safe');
-                    if(printBtn) printBtn.disabled = true;
-                    return;
-                }
-
-                if(emptyState) emptyState.classList.add('hidden-safe');
-                if(list) list.classList.remove('hidden-safe');
-                if(printBtn) printBtn.disabled = false;
-
-                const questions = window.cartIds.map(id => window.questionsData.find(q => q.id === id)).filter(Boolean);
-
-                if(list) {
-                    list.innerHTML = questions.map((q, idx) => {
-                        const isPdf = window.checkIfPdf(q);
-                        const safeTopic = (q.topic||'').replace(/"/g, '&quot;');
-                        const safeName = (q.fileName||'').replace(/"/g, '&quot;');
-
-                        return `
-                        <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 transition-all hover:shadow-md">
-                            <div class="flex flex-col gap-1 items-center px-2 border-r border-slate-100">
-                                <button onclick="window.testLogic.moveUp(${idx})" class="text-slate-400 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-slate-400" ${idx === 0 ? 'disabled' : ''}>
-                                    <i data-lucide="chevron-up" class="w-5 h-5 pointer-events-none"></i>
-                                </button>
-                                <span class="text-xs font-black text-slate-800 w-5 text-center">${idx + 1}</span>
-                                <button onclick="window.testLogic.moveDown(${idx})" class="text-slate-400 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-slate-400" ${idx === questions.length - 1 ? 'disabled' : ''}>
-                                    <i data-lucide="chevron-down" class="w-5 h-5 pointer-events-none"></i>
-                                </button>
-                            </div>
-                            
-                            <div class="w-16 h-16 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center shrink-0">
-                                ${(!q.fileUrl || q.fileUrl.trim() === '') ? `
-                                    <div class="flex flex-col items-center justify-center w-full h-full text-slate-400">
-                                        <i data-lucide="bar-chart-2" class="w-6 h-6 mb-1 opacity-50"></i>
-                                    </div>
-                                ` : isPdf ? `<i data-lucide="file-text" class="w-8 h-8 text-rose-400"></i>` : `
-                                    <img src="${q.fileUrl}" class="w-full h-full object-cover mix-blend-multiply" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-                                    <div style="display:none;" class="flex-col items-center justify-center w-full h-full bg-slate-200 text-slate-400">
-                                        <i data-lucide="image-off" class="w-6 h-6"></i>
-                                    </div>
-                                `}
-                            </div>
-                            
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">${q.subject}</span>
-                                </div>
-                                <h4 class="text-sm font-bold text-slate-800 truncate" title="${safeTopic}">${safeTopic}</h4>
-                                <p class="text-[10px] text-slate-400 mt-0.5 truncate">${safeName}</p>
-                            </div>
-                            
-                            <button onclick="window.testLogic.remove('${q.id}')" class="p-3 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl transition-colors shrink-0 mr-2">
-                                <i data-lucide="x" class="w-5 h-5 pointer-events-none"></i>
-                            </button>
-                        </div>
-                        `;
-                    }).join('');
-                }
-                
-                if(window.lucide) window.lucide.createIcons();
+                const empty = document.getElementById('test-empty');
+                if(window.cartIds.length === 0) { list.innerHTML = ""; empty.classList.remove('hidden-safe'); document.getElementById('btn-go-print').disabled = true; return; }
+                empty.classList.add('hidden-safe'); document.getElementById('btn-go-print').disabled = false;
+                list.innerHTML = window.cartIds.map((id, idx) => {
+                    const q = window.questionsData.find(x => x.id === id);
+                    if(!q) return "";
+                    return `
+                    <div class="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
+                        <span class="font-black text-slate-300 text-2xl w-8">${idx+1}</span>
+                        <div class="w-12 h-12 bg-slate-100 rounded flex items-center justify-center">${window.checkIfPdf(q) ? '<i data-lucide="file-text"></i>' : `<img src="${q.fileUrl}" class="w-full h-full object-cover">`}</div>
+                        <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate">${q.topic}</p><p class="text-[10px] text-slate-400">${q.fileName}</p></div>
+                        <button onclick="window.repoLogic.toggleCart('${id}'); window.testLogic.renderCart();" class="text-rose-500"><i data-lucide="x"></i></button>
+                    </div>`;
+                }).join('');
+                lucide.createIcons();
             },
-
             renderPrint: () => {
-                const pdEl = document.getElementById('print-date');
-                if(pdEl) pdEl.innerText = new Date().toLocaleDateString('tr-TR');
-                
+                document.getElementById('print-date').innerText = new Date().toLocaleDateString('tr-TR');
                 const container = document.getElementById('print-questions-container');
-                const questions = window.cartIds.map(id => window.questionsData.find(q => q.id === id)).filter(Boolean);
-
-                if(container) {
-                    container.innerHTML = questions.map((q, index) => `
-                        <div class="print-avoid-break flex flex-col border border-slate-200 p-4 rounded-xl relative">
-                            <div class="absolute -top-3 -left-3 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center font-black text-sm border-4 border-white z-10">${index + 1}</div>
-                            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                                <div class="ml-6 flex flex-col">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${q.subject}</span>
-                                    <span class="text-xs font-bold text-slate-800">${(q.topic||'').replace(/"/g, '&quot;')}</span>
-                                </div>
-                            </div>
-                            ${(!q.fileUrl || q.fileUrl.trim() === '') ? `
-                                <div class="flex-1 flex flex-col items-center justify-center min-h-[250px] bg-slate-50 border border-slate-200 border-dashed rounded-lg p-4">
-                                    <i data-lucide="bar-chart-2" class="w-10 h-10 text-slate-300 mb-2"></i>
-                                    <span class="text-xs font-bold text-slate-500 text-center uppercase tracking-widest">Soru Görseli Yok<br>Sadece Analiz</span>
-                                </div>
-                            ` : window.checkIfPdf(q) ? `
-                                <div class="flex-1 flex flex-col items-center justify-center min-h-[250px] bg-slate-50 border border-slate-200 border-dashed rounded-lg p-4">
-                                    <i data-lucide="file-text" class="w-10 h-10 text-slate-300 mb-2"></i>
-                                    <span class="text-xs font-bold text-slate-500 text-center">Bu soru bir PDF dosyasıdır.<br>Orijinal dosyadan yazdırınız.</span>
-                                </div>
-                            ` : `
-                                <div class="flex-1 flex items-center justify-center min-h-[250px]">
-                                    <img src="${q.fileUrl}" onerror="this.onerror=null; this.src=window.FALLBACK_IMG;" class="max-w-full max-h-[450px] object-contain mix-blend-multiply" style="width:100%;" />
-                                </div>
-                            `}
-                        </div>
-                    `).join('');
-                }
-                if(window.lucide) window.lucide.createIcons();
+                container.innerHTML = window.cartIds.map((id, idx) => {
+                    const q = window.questionsData.find(x => x.id === id);
+                    return `
+                    <div class="print-avoid-break border border-slate-200 p-4 rounded-xl flex flex-col gap-4 relative">
+                        <div class="absolute top-2 left-2 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-black">${idx+1}</div>
+                        <div class="text-[10px] font-black text-slate-400 text-right uppercase">${q.subject} / ${q.topic}</div>
+                        ${window.checkIfPdf(q) ? '<div class="h-60 flex flex-col items-center justify-center bg-slate-50 border-2 border-dashed rounded text-slate-400 text-xs text-center p-4"><i data-lucide="file-text" class="mb-2"></i>PDF Soru - Orijinalden yazdırınız.</div>' : `<img src="${q.fileUrl}" class="max-w-full h-auto">`}
+                    </div>`;
+                }).join('');
+                lucide.createIcons();
             }
         };
 
-        // ==========================================
-        // 6. AYARLAR & NAVİGASYON
-        // ==========================================
+        // --- 7. SETTINGS & NAV ---
+        window.settingsLogic = {
+            saveFirebase: () => {
+                const val = document.getElementById('setting-firebase-config').value.trim();
+                try {
+                    const parsed = JSON.parse(val.replace(/const.*?=|;/g, '').trim());
+                    localStorage.setItem('lgs_depo_firebase_config', JSON.stringify(parsed));
+                    window.uiLogic.showModal("Başarılı", "Sistem yeniden başlatılıyor...", false, () => location.reload());
+                } catch(e) { window.uiLogic.showModal("Hata", "Format yanlış."); }
+            },
+            clearFirebase: () => { localStorage.removeItem('lgs_depo_firebase_config'); location.reload(); }
+        };
+
         window.appNav = {
-            goTo: (viewName) => {
-                ['repo', 'upload', 'test', 'settings', 'print'].forEach(v => {
-                    const el = document.getElementById(`view-${v}`);
-                    if (el) el.classList.add('hidden-safe');
-                });
-                
-                const topHeader = document.getElementById('top-header');
-                if(topHeader) topHeader.classList.remove('hidden-safe');
-                
-                ['repo', 'upload', 'test', 'settings'].forEach(v => {
-                    const btn = document.getElementById(`nav-${v}`);
-                    if (btn) btn.className = "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all font-medium text-slate-400 hover:bg-slate-800 hover:text-white border-transparent";
-                });
-
-                const activeBtn = document.getElementById(`nav-${viewName}`);
-                if (activeBtn) {
-                    activeBtn.className = "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all font-bold bg-blue-600/10 text-blue-400 shadow-sm border border-blue-500/20";
-                }
-
-                if (viewName === 'repo') {
-                    const el = document.getElementById('view-repo');
-                    if(el) el.classList.remove('hidden-safe');
-                    window.repoLogic.onFilterChange(); 
-                } else if (viewName === 'upload') {
-                    const el = document.getElementById('view-upload');
-                    if(el) el.classList.remove('hidden-safe');
-                    window.uploadLogic.clear();
-                } else if (viewName === 'test') {
-                    const el = document.getElementById('view-test');
-                    if(el) el.classList.remove('hidden-safe');
-                    window.testLogic.renderCart();
-                } else if (viewName === 'settings') {
-                    const el = document.getElementById('view-settings');
-                    if(el) el.classList.remove('hidden-safe');
-                } else if (viewName === 'print') {
-                    if(topHeader) topHeader.classList.add('hidden-safe');
-                    const el = document.getElementById('view-print');
-                    if(el) el.classList.remove('hidden-safe');
-                    window.testLogic.renderPrint();
-                }
-                
-                setTimeout(() => { if (window.lucide) window.lucide.createIcons(); }, 10);
+            goTo: (name) => {
+                ['repo','upload','test','settings','print'].forEach(v => document.getElementById(`view-${v}`)?.classList.add('hidden-safe'));
+                document.getElementById('top-header').classList.remove('hidden-safe');
+                document.getElementById(`view-${name}`)?.classList.remove('hidden-safe');
+                if(name === 'repo') window.repoLogic.onFilterChange();
+                if(name === 'test') window.testLogic.renderCart();
+                if(name === 'print') { document.getElementById('top-header').classList.add('hidden-safe'); window.testLogic.renderPrint(); }
+                lucide.createIcons();
             }
-        };
-
-        // ==========================================
-        // 7. SİSTEM BAŞLATMA VE FİREBASE DİNLEME
-        // ==========================================
-        const loadFirestoreData = (user) => {
-            onSnapshot(collection(db, 'artifacts', appId, 'users', user.uid, 'questions'), (snapshot) => {
-                let fData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                fData.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0)); 
-                window.questionsData = fData;
-                
-                const viewRepo = document.getElementById('view-repo');
-                if(viewRepo && !viewRepo.classList.contains('hidden-safe')) {
-                    window.repoLogic.onFilterChange(); 
-                }
-            }, (err) => {
-                console.error("Firestore dinleme hatası:", err);
-            });
-            
-            const loading = document.getElementById('loading-screen');
-            if(loading) loading.classList.add('hidden-safe'); 
-            const sidebar = document.getElementById('sidebar');
-            if(sidebar) sidebar.classList.remove('hidden-safe'); 
-            const main = document.getElementById('main-content');
-            if(main) main.classList.remove('hidden-safe');
-            
-            window.appNav.goTo('repo');
         };
 
         const initApp = async () => {
-            if (window.isLocalMode) {
-                window.currentUser = { uid: 'yerel-kullanici' }; 
-                const uidDisp = document.getElementById('user-id-display');
-                if(uidDisp) uidDisp.innerText = `Çevrimdışı (Bulut Yok)`;
-                const statusInd = document.getElementById('status-indicator');
-                if(statusInd) statusInd.className = "absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-slate-500 border-2 border-slate-900";
-                
-                const loading = document.getElementById('loading-screen');
-                if(loading) loading.classList.add('hidden-safe'); 
-                const sidebar = document.getElementById('sidebar');
-                if(sidebar) sidebar.classList.remove('hidden-safe'); 
-                const main = document.getElementById('main-content');
-                if(main) main.classList.remove('hidden-safe');
-                
+            if(window.isLocalMode) {
+                document.getElementById('loading-screen').classList.add('hidden-safe');
+                document.getElementById('sidebar').classList.remove('hidden-safe');
+                document.getElementById('main-content').classList.remove('hidden-safe');
                 window.appNav.goTo('settings');
-                return window.uiLogic.showModal("Bağlantı Gerekli", "Soru Deposu'nun 50 MB'a kadar PDF dosyalarını barındırabilmesi için Firebase <b>Storage</b> bağlantısı zorunludur. Lütfen Ayarlar sekmesinden geçerli bir Firebase kodu giriniz.");
+                return window.uiLogic.showModal("Hata", "Firebase bağlayın.");
             }
-
-            try {
-                const loadingText = document.getElementById('loading-text');
-                if(loadingText) loadingText.innerText = "Buluta Bağlanılıyor...";
-                
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                const loading = document.getElementById('loading-screen');
-                if(loading) loading.classList.add('hidden-safe'); 
-                const sidebar = document.getElementById('sidebar');
-                if(sidebar) sidebar.classList.remove('hidden-safe'); 
-                const main = document.getElementById('main-content');
-                if(main) main.classList.remove('hidden-safe');
-                window.appNav.goTo('settings');
-            }
-        };
-
-        if (!window.isLocalMode && auth) {
             onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    window.currentUser = user; 
-                    const uidDisp = document.getElementById('user-id-display');
-                    if(uidDisp) uidDisp.innerText = `Buluta Bağlı (ID: ${user.uid.substring(0,5)})`;
-                    const statusInd = document.getElementById('status-indicator');
-                    if(statusInd) statusInd.className = "absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-900";
-                    loadFirestoreData(user);
+                if(user) {
+                    window.currentUser = user;
+                    document.getElementById('user-id-display').innerText = `ID: ${user.uid.substring(0,6)}`;
+                    document.getElementById('status-indicator').className = "absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-900";
+                    onSnapshot(collection(db, 'artifacts', appId, 'users', user.uid, 'questions'), (snap) => {
+                        window.questionsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                        window.repoLogic.applyFilters();
+                    });
+                    document.getElementById('loading-screen').classList.add('hidden-safe');
+                    document.getElementById('sidebar').classList.remove('hidden-safe');
+                    document.getElementById('main-content').classList.remove('hidden-safe');
+                    window.appNav.goTo('repo');
                 }
             });
-        }
+            await signInAnonymously(auth);
+        };
 
-        initApp(); setTimeout(() => { if (window.lucide) window.lucide.createIcons(); }, 10);
+        initApp();
     </script>
 </body>
 </html>
