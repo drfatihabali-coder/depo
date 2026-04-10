@@ -396,9 +396,9 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'rana-lgs-depo-v1';
         
         window.currentUser = null;
-        window.questionsData = []; // Tüm veritabanı { id, fileUrl, isPdf, fileName, subject, topic, date }
-        window.cartIds = []; // Test için seçilen soru ID'leri dizisi
-        window.localDbMemory = []; // Çevrimdışı mod için
+        window.questionsData = []; 
+        window.cartIds = []; 
+        window.localDbMemory = []; 
 
         // Formu doldur
         document.addEventListener('DOMContentLoaded', () => {
@@ -577,7 +577,7 @@
         // 3. YÜKLEME (UPLOAD) MANTIĞI
         // ==========================================
         window.uploadLogic = {
-            filesData: [], // { id, fileObj, previewBase64, isPdf, subject, topic }
+            filesData: [], 
             
             handleFiles: async (fileList) => {
                 if (!fileList || fileList.length === 0) return;
@@ -597,19 +597,17 @@
                     const isPdf = checkIfPdf(file);
                     if(!isPdf && !file.type.startsWith('image/')) continue;
 
-                    // Sadece önizleme için ufak bir base64
                     let previewBase64 = "";
                     if (!isPdf && file.size < 5 * 1024 * 1024) {
                         try { previewBase64 = await getBase64(file); } catch(e){}
                     } else if (isPdf && file.size < 5 * 1024 * 1024) {
-                         // PDF ise AI için base64 lazım olabilir
                          try { previewBase64 = await getBase64(file); } catch(e){}
                     }
 
                     window.uploadLogic.filesData.push({
                         id: generateId(),
                         fileObj: file,
-                        previewBase64: previewBase64, // AI için gerekli base64
+                        previewBase64: previewBase64,
                         isPdf: isPdf,
                         subject: "",
                         topic: ""
@@ -664,7 +662,7 @@
 
                 for (let i = 0; i < window.uploadLogic.filesData.length; i++) {
                     const f = window.uploadLogic.filesData[i];
-                    if (!f.previewBase64) continue; // Base64 yoksa (çok büyük dosya ise) atla
+                    if (!f.previewBase64) continue; 
 
                     try {
                         const aiResult = await analyzeTopicWithAI(f.previewBase64);
@@ -782,7 +780,11 @@
 
                 } catch (err) {
                     console.error(err);
-                    window.uiLogic.showModal("Kritik Yükleme Hatası", "Dosyalar sunucuya gönderilirken bağlantı koptu veya hata oluştu:<br><br><span class='text-xs text-rose-500 font-mono break-all'>" + err.message + "</span>");
+                    let errMsg = err.message;
+                    if (err.message.includes("Network Error") || err.message.includes("CORS") || err.message.includes("Failed to fetch") || err.name === "FirebaseError") {
+                        errMsg = "Firebase Storage CORS (Güvenlik) engeline takıldınız.<br><br><b>Çözüm:</b><br>1. <a href='https://console.cloud.google.com/' target='_blank' class='text-blue-500 underline'>Google Cloud Console</a>'a girin.<br>2. Projenizi seçip sağ üstten 'Cloud Shell'i (>_) açın.<br>3. Şu komutları sırayla çalıştırın:<br><code class='block bg-slate-100 p-2 mt-2 text-[10px] break-all'>echo '[{\"origin\": [\"*\"],\"method\": [\"GET\", \"HEAD\", \"POST\", \"PUT\", \"DELETE\", \"OPTIONS\"],\"maxAgeSeconds\": 3600,\"responseHeader\": [\"*\"]}]' > cors.json</code><br><br><code class='block bg-slate-100 p-2 mt-2 text-[10px] break-all'>gsutil cors set cors.json gs://puantaj-5366f.firebasestorage.app</code>";
+                    }
+                    window.uiLogic.showModal("Kritik Yükleme Hatası", "Dosyalar sunucuya gönderilirken bağlantı koptu veya hata oluştu:<br><br><span class='text-xs text-rose-500 font-mono block mt-2'>" + errMsg + "</span>");
                 } finally {
                     if(btn) {
                         btn.disabled = false;
@@ -870,6 +872,36 @@
                     }
                 });
             },
+            
+            deleteSelected: async () => {
+                if (window.cartIds.length === 0) return;
+                
+                window.uiLogic.showModal("Seçilenleri Sil", `Sepetteki <b>${window.cartIds.length}</b> adet soruyu kalıcı olarak silmek istediğinize emin misiniz?`, true, async () => {
+                    try {
+                        if (!window.isLocalMode && window.currentUser) {
+                            const deletePromises = window.cartIds.map(async (id) => {
+                                const q = window.questionsData.find(x => x.id === id);
+                                if (q) {
+                                    await deleteDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'questions', id));
+                                    if (q.fileUrl && q.fileUrl.includes('firebasestorage.googleapis.com')) {
+                                        try {
+                                            const fileRef = ref(storage, q.fileUrl);
+                                            await deleteObject(fileRef);
+                                        } catch (e) { console.warn("Storage silme atlandı:", e); }
+                                    }
+                                }
+                            });
+                            await Promise.all(deletePromises);
+                        }
+                        
+                        window.cartIds = [];
+                        window.uiLogic.updateCartBadge();
+                        window.uiLogic.showModal("Başarılı", "Seçilen sorular başarıyla silindi.");
+                    } catch(err) {
+                        window.uiLogic.showModal("Hata", "Sorular silinemedi: " + err.message);
+                    }
+                });
+            },
 
             toggleCart: (id) => {
                 const index = window.cartIds.indexOf(id);
@@ -882,7 +914,7 @@
                 window.repoLogic.applyFilters(); 
             },
             
-            clearCart: () => {
+            clearSelection: () => {
                 window.cartIds = [];
                 window.uiLogic.updateCartBadge();
                 window.repoLogic.applyFilters();
@@ -892,8 +924,10 @@
                 const countEl = document.getElementById('repo-total-count');
                 const emptyState = document.getElementById('repo-empty');
                 const grid = document.getElementById('repo-grid');
+                const delSelectedBtn = document.getElementById('repo-delete-selected-btn');
 
                 if(countEl) countEl.innerText = dataList.length;
+                if(delSelectedBtn) delSelectedBtn.disabled = window.cartIds.length === 0;
 
                 if (dataList.length === 0) {
                     if(emptyState) emptyState.classList.remove('hidden-safe');
@@ -913,6 +947,7 @@
                         
                         const safeTopic = (q.topic || 'Belirtilmemiş').replace(/"/g, '&quot;');
                         const safeName = (q.fileName || 'Soru').replace(/"/g, '&quot;');
+                        const isPdf = window.checkIfPdf(q);
 
                         let dateStr = "-";
                         if(q.createdAt) {
@@ -920,14 +955,19 @@
                         }
 
                         return `
-                        <div class="bg-white rounded-2xl overflow-hidden border ${borderClass} transition-all flex flex-col group relative">
+                        <div id="repo-card-${q.id}" class="bg-white rounded-2xl overflow-hidden border ${borderClass} transition-all flex flex-col group relative">
                             
                             <button type="button" onclick="window.repoLogic.deleteQuestion('${q.id}', '${q.fileUrl}')" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-rose-600 text-white p-2 rounded-lg z-20 shadow-sm transition-colors opacity-0 group-hover:opacity-100 backdrop-blur-sm" title="Tamamen Sil">
                                 <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
                             </button>
                             
                             <div class="aspect-[4/3] bg-slate-100 flex items-center justify-center relative overflow-hidden group/inner cursor-pointer" onclick="window.uiLogic.openPdfModal('${q.fileUrl}', '${safeName}')">
-                                ${q.isPdf ? `
+                                ${(!q.fileUrl || q.fileUrl.trim() === '') ? `
+                                    <div class="flex flex-col items-center justify-center w-full h-full p-4 text-slate-400">
+                                        <i data-lucide="bar-chart-2" class="w-12 h-12 mb-3 opacity-50"></i>
+                                        <span class="text-[10px] font-black uppercase tracking-widest text-center">Görsel Yok<br>Sadece Analiz</span>
+                                    </div>
+                                ` : isPdf ? `
                                     <div class="flex flex-col items-center justify-center w-full h-full bg-rose-50/80 p-4 transition-colors hover:bg-rose-100">
                                         <i data-lucide="file-text" class="w-12 h-12 text-rose-500 mb-3 transition-transform group-hover/inner:scale-110 drop-shadow-sm"></i>
                                         <span class="text-[11px] font-bold text-rose-800 text-center leading-tight line-clamp-3">${safeName}</span>
@@ -978,12 +1018,14 @@
                 window.cartIds = [];
                 window.uiLogic.updateCartBadge();
                 window.testLogic.renderCart();
+                window.repoLogic.applyFilters();
             },
             
             remove: (id) => {
                 window.cartIds = window.cartIds.filter(cid => cid !== id);
                 window.uiLogic.updateCartBadge();
                 window.testLogic.renderCart();
+                window.repoLogic.applyFilters();
             },
 
             moveUp: (index) => {
@@ -1025,6 +1067,10 @@
 
                 if(list) {
                     list.innerHTML = questions.map((q, idx) => {
+                        const isPdf = window.checkIfPdf(q);
+                        const safeTopic = (q.topic||'').replace(/"/g, '&quot;');
+                        const safeName = (q.fileName||'').replace(/"/g, '&quot;');
+
                         return `
                         <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 transition-all hover:shadow-md">
                             <div class="flex flex-col gap-1 items-center px-2 border-r border-slate-100">
@@ -1038,7 +1084,11 @@
                             </div>
                             
                             <div class="w-16 h-16 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center shrink-0">
-                                ${q.isPdf ? `<i data-lucide="file-text" class="w-8 h-8 text-rose-400"></i>` : `
+                                ${(!q.fileUrl || q.fileUrl.trim() === '') ? `
+                                    <div class="flex flex-col items-center justify-center w-full h-full text-slate-400">
+                                        <i data-lucide="bar-chart-2" class="w-6 h-6 mb-1 opacity-50"></i>
+                                    </div>
+                                ` : isPdf ? `<i data-lucide="file-text" class="w-8 h-8 text-rose-400"></i>` : `
                                     <img src="${q.fileUrl}" class="w-full h-full object-cover mix-blend-multiply" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                                     <div style="display:none;" class="flex-col items-center justify-center w-full h-full bg-slate-200 text-slate-400">
                                         <i data-lucide="image-off" class="w-6 h-6"></i>
@@ -1050,8 +1100,8 @@
                                 <div class="flex items-center gap-2 mb-1">
                                     <span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">${q.subject}</span>
                                 </div>
-                                <h4 class="text-sm font-bold text-slate-800 truncate" title="${(q.topic||'').replace(/"/g, '&quot;')}">${(q.topic||'').replace(/"/g, '&quot;')}</h4>
-                                <p class="text-[10px] text-slate-400 mt-0.5 truncate">${(q.fileName||'').replace(/"/g, '&quot;')}</p>
+                                <h4 class="text-sm font-bold text-slate-800 truncate" title="${safeTopic}">${safeTopic}</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5 truncate">${safeName}</p>
                             </div>
                             
                             <button onclick="window.testLogic.remove('${q.id}')" class="p-3 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl transition-colors shrink-0 mr-2">
@@ -1082,14 +1132,19 @@
                                     <span class="text-xs font-bold text-slate-800">${(q.topic||'').replace(/"/g, '&quot;')}</span>
                                 </div>
                             </div>
-                            ${q.isPdf ? `
+                            ${(!q.fileUrl || q.fileUrl.trim() === '') ? `
+                                <div class="flex-1 flex flex-col items-center justify-center min-h-[250px] bg-slate-50 border border-slate-200 border-dashed rounded-lg p-4">
+                                    <i data-lucide="bar-chart-2" class="w-10 h-10 text-slate-300 mb-2"></i>
+                                    <span class="text-xs font-bold text-slate-500 text-center uppercase tracking-widest">Soru Görseli Yok<br>Sadece Analiz</span>
+                                </div>
+                            ` : window.checkIfPdf(q) ? `
                                 <div class="flex-1 flex flex-col items-center justify-center min-h-[250px] bg-slate-50 border border-slate-200 border-dashed rounded-lg p-4">
                                     <i data-lucide="file-text" class="w-10 h-10 text-slate-300 mb-2"></i>
                                     <span class="text-xs font-bold text-slate-500 text-center">Bu soru bir PDF dosyasıdır.<br>Orijinal dosyadan yazdırınız.</span>
                                 </div>
                             ` : `
                                 <div class="flex-1 flex items-center justify-center min-h-[250px]">
-                                    <img src="${q.fileUrl}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'24\\' height=\\'24\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'%23cbd5e1\\' stroke-width=\\'2\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'><circle cx=\\'12\\' cy=\\'12\\' r=\\'10\\'/><line x1=\\'12\\' y1=\\'8\\' x2=\\'12\\' y2=\\'12\\'/><line x1=\\'12\\' y1=\\'16\\' x2=\\'12.01\\' y2=\\'16\\'/></svg>';" class="max-w-full max-h-[450px] object-contain mix-blend-multiply" style="width:100%;" />
+                                    <img src="${q.fileUrl}" onerror="this.onerror=null; this.src=window.FALLBACK_IMG;" class="max-w-full max-h-[450px] object-contain mix-blend-multiply" style="width:100%;" />
                                 </div>
                             `}
                         </div>
@@ -1102,59 +1157,6 @@
         // ==========================================
         // 6. AYARLAR & NAVİGASYON
         // ==========================================
-        window.settingsLogic = {
-            saveGemini: () => {
-                const apiInput = document.getElementById('setting-api-key');
-                if(!apiInput) return;
-                const key = apiInput.value.trim(); 
-                localStorage.setItem('lgs_depo_gemini_api_key', key); 
-                currentApiKey = key;
-                window.uiLogic.showModal("Başarılı", "Gemini API anahtarı başarıyla kaydedildi.");
-            },
-            saveFirebase: () => {
-                const fbInput = document.getElementById('setting-firebase-config');
-                if(!fbInput) return;
-                const val = fbInput.value.trim();
-                
-                if (!val) return window.uiLogic.showModal("Uyarı", "Lütfen bir konfigürasyon girin.");
-                try {
-                    let cleanedStr = val.replace(/const\s+firebaseConfig\s*=\s*/, '').replace(/;$/, '').trim();
-                    cleanedStr = cleanedStr.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
-                    cleanedStr = cleanedStr.replace(/'/g, '"');
-                    const parsed = JSON.parse(cleanedStr);
-                    if(!parsed.apiKey || !parsed.projectId) throw new Error("Geçersiz Firebase Konfigürasyonu");
-                    localStorage.setItem('lgs_depo_firebase_config', JSON.stringify(parsed));
-                    window.uiLogic.showModal("Başarılı", "Firebase bağlantısı kaydedildi! Sistem yeniden başlatılıyor...", true, () => location.reload());
-                    setTimeout(() => location.reload(), 2000);
-                } catch (err) { window.uiLogic.showModal("Format Hatası", err.message); }
-            },
-            clearFirebase: () => {
-                localStorage.removeItem('lgs_depo_firebase_config');
-                window.uiLogic.showModal("Bağlantı Kesildi", "Yerel moda geçiliyor...", false, () => location.reload());
-                setTimeout(() => location.reload(), 2000);
-            },
-            deleteAll: () => {
-                window.uiLogic.showModal("Tehlikeli İşlem Onayı", "TÜM soru arşivi ve PDF'ler kalıcı olarak silinecek! Devam edilsin mi?", true, async () => {
-                    try {
-                        if (window.isLocalMode) {
-                            alert("Yerel moddasınız. Soru deposu sadece bulutta çalışır.");
-                        } else {
-                            if (!window.currentUser) throw new Error("Oturum kapalı.");
-                            const deletePromises = window.questionsData.map(async (q) => {
-                                await deleteDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'questions', q.id));
-                                if(q.fileUrl && q.fileUrl.includes('firebasestorage')) {
-                                    try { await deleteObject(ref(storage, q.fileUrl)); } catch(e){}
-                                }
-                            });
-                            await Promise.all(deletePromises);
-                            window.uiLogic.showModal("Temizlik Tamam", "Tüm depo sıfırlandı.");
-                            window.testLogic.clearCart();
-                        }
-                    } catch(err) { window.uiLogic.showModal("Hata", err.message); }
-                });
-            }
-        };
-
         window.appNav = {
             goTo: (viewName) => {
                 ['repo', 'upload', 'test', 'settings', 'print'].forEach(v => {
@@ -1175,32 +1177,21 @@
                     activeBtn.className = "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all font-bold bg-blue-600/10 text-blue-400 shadow-sm border border-blue-500/20";
                 }
 
-                const topTitle = document.getElementById('top-bar-title');
-                const topActions = document.getElementById('top-bar-actions');
-
                 if (viewName === 'repo') {
                     const el = document.getElementById('view-repo');
                     if(el) el.classList.remove('hidden-safe');
-                    if(topTitle) topTitle.innerHTML = 'Soru Arşivi';
-                    if(topActions) topActions.innerHTML = `<button onclick="window.appNav.goTo('upload')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"><i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i> PDF Ekle</button>`;
                     window.repoLogic.onFilterChange(); 
                 } else if (viewName === 'upload') {
                     const el = document.getElementById('view-upload');
                     if(el) el.classList.remove('hidden-safe');
-                    if(topTitle) topTitle.innerHTML = 'PDF & Soru Yükleme Merkezi';
-                    if(topActions) topActions.innerHTML = '';
                     window.uploadLogic.clear();
                 } else if (viewName === 'test') {
                     const el = document.getElementById('view-test');
                     if(el) el.classList.remove('hidden-safe');
-                    if(topTitle) topTitle.innerHTML = 'Test Oluşturucu (Sepet)';
-                    if(topActions) topActions.innerHTML = '';
                     window.testLogic.renderCart();
                 } else if (viewName === 'settings') {
                     const el = document.getElementById('view-settings');
                     if(el) el.classList.remove('hidden-safe');
-                    if(topTitle) topTitle.innerHTML = 'Bağlantı & Ayarlar';
-                    if(topActions) topActions.innerHTML = '';
                 } else if (viewName === 'print') {
                     if(topHeader) topHeader.classList.add('hidden-safe');
                     const el = document.getElementById('view-print');
